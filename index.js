@@ -2,7 +2,6 @@ const cors = require("cors");
 const express = require("express");
 const dotenv = require("dotenv");
 
-const Data = require("./data");
 const app = express()
 const { register, login, profie, dashboard } = require("./controller/userController");
 const authMiddlerware = require("./midderware/authMiddler");
@@ -23,16 +22,6 @@ app.post("/login", login)
 app.get("/profile", authMiddlerware, profie)
 app.get("/dashboard", authMiddlerware, dashboard)
 
-app.post("/user", (req, res) => {
-    res.send(Data)
-    console.log(Data);
-})
-
-
-app.get("/bihar", (req, res) => {
-    res.send(Data)
-    // console.log(Data);
-})
 
 app.listen(port, () => {
     console.log(`server is live on ${port}`);

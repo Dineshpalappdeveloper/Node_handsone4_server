@@ -1,5 +1,4 @@
 const secretkey = "23232131"
-// const secretkey = "59894616498798"
 const jwt = require('jsonwebtoken')
 const authMiddlerware = (req, res, next) => {
     const bearer = req.headers["authorization"]
@@ -10,7 +9,7 @@ const authMiddlerware = (req, res, next) => {
         const token1 = process.env.seecrectkey
         console.log("log token by dkp", token1);
         if (token === undefined) {
-            return res.send({ msg: "Access Denide try Again" })
+            return res.status(401).send({ msg: "Access Denide try Again" })
         }
 
         // const validate = jwt.verify(token, process.env.seecrectkey)
@@ -18,7 +17,7 @@ const authMiddlerware = (req, res, next) => {
         if (validate) {
             return next()
         }
-        return res.send({ message: "Not Allowed" })
+        return res.status(403).send({ message: "Not Allowed" })
     }
 }
 module.exports = authMiddlerware;
