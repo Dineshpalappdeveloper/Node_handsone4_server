@@ -1,69 +1,53 @@
 let arr = [];
-const dotenv = require("dotenv");
+// const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt");
 const secretkey = "23232131"
 const saltround = 10;
-dotenv.config();
+// dotenv.config();
 
 const register = (req, res) => {
     const details = req.body;
     if (details.name && details.phone && details.email && details.password) {
-        const find = arr.find((item) => details.email === item.email);
-
-        const hashpassword = bcrypt.hashSync(details.password, saltround);
-
-        if (find) {
-            return res.send({ msg: "Email is already Exits" });
+        const match = arr.find((item) => details.email === item.email);
+        if (match) {
+            return res.send({ msg: "User is already registred." })
         }
+        const hashpassword = bcrypt.hashSync(details.password, saltround);
         const temp = {
             name: details.name,
             email: details.email,
             phone: details.phone,
             password: hashpassword,
         }
-        console.log(secretkey);
         arr.push(temp);
-        const token = jwt.sign({ email: details.email }, secretkey, { expiresIn: "30days" })
-        res.status(200).send({ msg: "user is register", result: temp, token: token });
-
-    } else {
-        return res.send({ msg: "user is not  register, Register first", result: temp, token: token });
+        const token = jwt.sign({ email: details.email }, secretkey, { expiresIn: "30 days" })
+        return res.status(200).send({ msg: "user is register", result: temp, token: token });
 
     }
+    else {
+        return res.send({ msg: "user is not  register, Register first" });
 
-
+    }
 };
-
-
-
-
-
-
-
-
 
 
 const login = async (req, res) => {
     const details = req.body;
     if (details.email && details.password) {
-        const find = arr.find((item) => details.email === item.email);
-        if (!find) {
+        const match = arr.find((item) => details.email === item.email);
+        if (!match) {
             return res.send({ msg: "user is not register" });
-        } else {
-            const validated = await bcrypt.compare(details.password, find.password);
-            if (!validated) {
-                return res.send({ msg: "user or password is wrong " });
-
-            } else {
-                const token = jwt.sign({ email: details.email }, secretkey, { expiresIn: "30days" })
-
-                return res.send({ msg: "user is login successfully", token: token });
-
-            }
         }
-    } else {
-        return res.send({ msg: "user is login failled, Try Again", token: token });
+        const validated = await bcrypt.compare(details.password, match.password);
+        if (!validated) {
+            return res.send({ msg: "user or password is wrong " });
+        }
+        const token = jwt.sign({ email: details.email }, secretkey, { expiresIn: "30 days" })
+        return res.send({ msg: "user is login successfully", token: token });
+    }
+    else {
+        return res.send({ msg: "user is login failled, Try Again" });
 
     }
 };
